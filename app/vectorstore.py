@@ -33,3 +33,16 @@ def add_chunks(doc_id: str, chunks: list[str]):
 # query - is the question text. top_k - how many of the closest chunks to return 
 def search_chunks(query: str, top_k: int = 4):
     return collection.query(query_texts=[query], n_results=top_k)
+
+
+def list_documents():
+    try:
+        data = collection.get(include=["metadatas"])
+    except Exception:
+        return []
+
+    sources = []
+    for metadata in data.get("metadatas", []):
+        if metadata and metadata.get("source") and metadata["source"] not in sources:
+            sources.append(metadata["source"])
+    return sources

@@ -1,10 +1,19 @@
 from pydantic import BaseModel
-from fastapi import FastAPI, UploadFile, File 
+from fastapi import FastAPI, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
 from app.ingestion import extract_text, chunk_text
-from app.vectorstore import add_chunks, search_chunks
+from app.vectorstore import add_chunks, list_documents, search_chunks
 from app.rag import generate_answer
 
 app = FastAPI(title="Document Intelligence API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class QueryRequest(BaseModel):
     question: str
@@ -25,6 +34,10 @@ async def upload_document(file: UploadFile = File(...)):
     # return JSON response back to whoever calls /upload endpoint 
     return {"filename": file.filename, "chunks_created": n}
 
+
+@app.get("/documents")
+def get_documents():
+    return {"documents": list_documents()}
 
 @app.post("/query")
 async def query_documents(request: QueryRequest):
