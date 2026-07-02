@@ -7,11 +7,11 @@ client = chromadb.PersistentClient(path="./data/chroma_db")
 
 # creating an embedding function- something Chroma can call automatically, every time 
 # we add or search to turn text into vector 
-embedding_fn = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
+# embedding_fn = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
 
 # collection - in ChromaDB is like a table in database 
 # get_or_create_collection - if a collection named "documents" already exists , reuse it  else create a new one 
-collection = client.get_or_create_collection(name="documents", embedding_function=embedding_fn)
+collection = client.get_or_create_collection(name="documents")
 
 # add_chunks () - saving chunks into the vector store
 def add_chunks(doc_id: str, chunks: list[str]):
